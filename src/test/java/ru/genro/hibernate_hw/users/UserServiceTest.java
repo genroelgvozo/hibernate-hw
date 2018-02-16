@@ -124,4 +124,24 @@ public class UserServiceTest extends HibernateTestBase {
 
         assertFalse(summaryService.get(summary.getId()).isPresent());
     }
+
+    @Test
+    public void getSummaryByExperienceByUserEqualAllSummaries() throws Exception {
+        User user = new User("name", "surname");
+        userService.save(user);
+
+        Summary summary1 = new Summary("Programming", 1);
+        Summary summary2 = new Summary("Programming", 3);
+
+        userService.addSummary(user, summary1);
+        userService.addSummary(user, summary2);
+        Set summaries1 = summaryService.getExperienced(3);
+        Set summaries2 = summaryService.getExperiencedByUser(user,3);
+        assertTrue(summaries1.size()==1);
+        assertTrue(summaries1.containsAll(summaries2));
+        assertTrue(summaries1.contains(summary2));
+        assertFalse(summaries1.contains(summary1));
+
+        userService.delete(user.id());
+    }
 }
