@@ -2,18 +2,21 @@ package ru.genro.hibernate_hw.users;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import ru.genro.hibernate_hw.hibernateBase.TransactionMethods;
 import ru.genro.hibernate_hw.summaries.Summary;
 import ru.genro.hibernate_hw.summaries.SummaryService;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
-public class UserService {
+public class UserService extends TransactionMethods{
 
-    private final SessionFactory sessionFactory;
     private final UserDAO userDAO;
     private final SummaryService summaryService;
 
@@ -65,31 +68,23 @@ public class UserService {
         });
     }
 
-    private <T> T inTransaction(Supplier<T> supplier) {
-        Optional<Transaction> transaction = beginTransaction();
-        try {
-            T result = supplier.get();
-            transaction.ifPresent(Transaction::commit);
-            return result;
-        } catch (RuntimeException e) {
-            transaction.ifPresent(Transaction::rollback);
-            throw e;
-        }
-    }
-
-    private void inTransaction(Runnable runnable) {
-        inTransaction(() -> {
-            runnable.run();
-            return null;
+    public void addSummary(User user, Summary summary) {
+        inTransaction(()-> {
+            user.addSummary(summary);
+            summaryService.save(summary);
         });
     }
 
-    private Optional<Transaction> beginTransaction() {
-        Transaction transaction = sessionFactory.getCurrentSession().getTransaction();
-        if (!transaction.isActive()) {
-            transaction.begin();
-            return Optional.of(transaction);
-        }
-        return Optional.empty();
+    public void deleteSummary(User user, Summary summary) {
+        inTransaction(()-> {
+            user.removeSummary(summary);
+            summaryService.delete(summary.getId());
+        });
     }
+
+    public Set<Summary> getSummariesByExpirience(int userId, int requiredExperience){
+        return inTransaction(() -> userDAO.getSummaries(userId).stream().filter((s) -> s.getExperience() > requiredExperience ).collect(Collectors.toSet()));
+    }
+
+
 }

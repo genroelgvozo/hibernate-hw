@@ -3,6 +3,7 @@ package ru.genro.hibernate_hw.users;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 import ru.genro.hibernate_hw.HibernateTestBase;
+import ru.genro.hibernate_hw.summaries.Summary;
 import ru.genro.hibernate_hw.summaries.SummaryDAO;
 import ru.genro.hibernate_hw.summaries.SummaryService;
 
@@ -109,5 +110,18 @@ public class UserServiceTest extends HibernateTestBase {
 
         assertFalse(userService.get(user1.id()).isPresent());
         assertTrue(userService.get(user2.id()).isPresent());
+    }
+
+
+    @Test
+    public void deleteUserShouldCauseDeleteSummaries() throws Exception {
+        User user = new User("name","surname");
+        userService.save(user);
+
+        Summary summary = new Summary("Programming",3);
+        userService.addSummary(user,summary);
+        userService.delete(user.id());
+
+        assertFalse(summaryService.get(summary.getId()).isPresent());
     }
 }

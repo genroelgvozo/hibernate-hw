@@ -1,6 +1,7 @@
 package ru.genro.hibernate_hw;
 
 import org.hibernate.SessionFactory;
+import ru.genro.hibernate_hw.hibernateBase.HibernateConfigFactory;
 import ru.genro.hibernate_hw.summaries.Summary;
 import ru.genro.hibernate_hw.summaries.SummaryDAO;
 import ru.genro.hibernate_hw.summaries.SummaryService;
@@ -27,21 +28,22 @@ class Main {
             System.out.println();
 
             System.out.println("persisting summaries");
-            Summary summary1 = new Summary("Skills");
-            Summary summary2 = new Summary("Skills++");
-            Summary summary3 = new Summary("Skills++");
-            headHunterz.addSummary(summary1);
-            headHunterz.addSummary(summary2);
-            headHunterz.addSummary(summary3);
-            summaryService.save(summary1);
-            summaryService.save(summary2);
-            summaryService.save(summary3);
+            Summary summary1 = new Summary("Skills",6);
+            Summary summary2 = new Summary("Skills++",2);
+            Summary summary3 = new Summary("Skills++", 5);
+            userService.addSummary(headHunterz, summary1);
+            userService.addSummary(headHunterz, summary2);
+            userService.addSummary(headHunterz, summary3);
 
-            summaryService.delete(summary3.getId());
-            for(Summary summary : headHunterz.getSummaries())
-            {
-                System.out.println(summary);
-            }
+
+            //Should be equal
+            System.out.println(summaryService.getExperienced(3));
+            System.out.println(summaryService.getExperiencedByUser(headHunterz,3));
+            System.out.println(userService.getSummariesByExpirience(headHunterz.id(),3));
+
+            userService.deleteSummary(headHunterz,summary3);
+
+            System.out.println(summaryService.getExperienced(3));
 
             System.out.println("deleting " + headHunterz);
             userService.delete(headHunterz.id());

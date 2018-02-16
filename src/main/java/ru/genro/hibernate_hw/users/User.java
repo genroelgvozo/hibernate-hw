@@ -43,6 +43,10 @@ public class User {
         this.summaries.add(summary);
     }
 
+    public void removeSummary(Summary summary) {
+        this.summaries.remove(summary);
+    }
+
     public User(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;

@@ -1,9 +1,15 @@
 package ru.genro.hibernate_hw.summaries;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
+import ru.genro.hibernate_hw.users.User;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
@@ -27,7 +33,24 @@ public class SummaryDAO {
 
         return Optional.ofNullable(summary);
     }
+    public Set<Summary> getExperienced(int experience) {
+        Criteria criteria = session().createCriteria(Summary.class).add(Restrictions.ge("experience",experience)); // Criteria query
+        // or session().createQuery("FROM User"); // HQL query
 
+        List<Summary> summaries = criteria.list();
+        return new HashSet<>(summaries);
+    }
+
+
+    public Set<Summary> getExperiencedByUser(User user, int experience) {
+        Criteria criteria = session().createCriteria(Summary.class);
+        criteria.add(Restrictions.eq("user", user));
+        criteria.add(Restrictions.ge("experience",experience)); // Criteria query
+        // or session().createQuery("FROM User"); // HQL query
+
+        List<Summary> summaries = criteria.list();
+        return new HashSet<>(summaries);
+    }
     public void update(Summary summary) {
         session().update(summary);
     }

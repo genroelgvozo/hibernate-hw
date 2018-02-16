@@ -18,6 +18,9 @@ public class Summary {
     @Column(name = "skills")
     private String skills;
 
+    @Column(name = "experience")
+    private Integer experience;
+
     @Column(name = "creation_time", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
@@ -34,16 +37,21 @@ public class Summary {
         this.user = user;
     }
 
-    public Summary(String skills)
+    public Summary(String skills, Integer experience)
     {
         this.skills = skills;
         this.creationDate = new Date();
+        this.experience = experience;
     }
 
     Summary(){}
 
     public Integer getId() {
         return id;
+    }
+
+    public Integer getExperience() {
+        return experience;
     }
 
     @Override
@@ -54,7 +62,8 @@ public class Summary {
         Summary thatSummary = (Summary) that;
         return Objects.equals(id, thatSummary.id)
                 && creationDate.equals(thatSummary.creationDate)
-                && skills.equals(thatSummary.skills);
+                && skills.equals(thatSummary.skills)
+                && experience.equals(thatSummary.experience);
     }
 
     @Override
@@ -64,7 +73,7 @@ public class Summary {
 
     @Override
     public String toString() {
-        return String.format("%s{id=%d, skills='%s', creationDate='%s'}",
-                getClass().getSimpleName(), id, skills, creationDate);
+        return String.format("%s{id=%d, skills='%s', experience=%d years, creationDate='%s'}",
+                getClass().getSimpleName(), id, skills, experience, creationDate);
     }
 }
